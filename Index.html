@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Foraria — Gestión de Consorcios</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#0d1117;
+    --bg2:#161b22;
+    --bg3:#1c2230;
+    --border:#21293a;
+    --blue:#3b82f6;
+    --blue2:#2563eb;
+    --blue-glow:rgba(59,130,246,0.15);
+    --text:#e6edf3;
+    --muted:#8b949e;
+    --white:#ffffff;
+  }
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.6}
+
+  /* NAV */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    background:rgba(13,17,23,0.85);backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--border);
+    padding:0 5%;height:64px;display:flex;align-items:center;justify-content:space-between;
+  }
+  .logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+  .logo-icon{
+    width:36px;height:36px;background:var(--blue);border-radius:8px;
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;color:#fff;
+  }
+  .logo-name{font-size:1.2rem;font-weight:700;color:var(--white)}
+  .nav-links{display:flex;gap:28px;list-style:none}
+  .nav-links a{color:var(--muted);text-decoration:none;font-size:.9rem;transition:color .2s}
+  .nav-links a:hover{color:var(--white)}
+  .nav-cta{
+    background:var(--blue);color:#fff;border:none;padding:8px 20px;
+    border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;
+    text-decoration:none;transition:background .2s;
+  }
+  .nav-cta:hover{background:var(--blue2)}
+
+  /* HERO */
+  .hero{
+    min-height:100vh;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;text-align:center;
+    padding:100px 5% 60px;
+    background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(59,130,246,0.12),transparent);
+  }
+  .hero-badge{
+    display:inline-flex;align-items:center;gap:6px;
+    background:var(--blue-glow);border:1px solid rgba(59,130,246,0.3);
+    color:var(--blue);padding:5px 14px;border-radius:999px;font-size:.8rem;font-weight:600;
+    margin-bottom:24px;letter-spacing:.04em;text-transform:uppercase;
+  }
+  .hero h1{
+    font-size:clamp(2.2rem,5vw,3.8rem);font-weight:800;line-height:1.15;
+    max-width:780px;margin-bottom:20px;
+  }
+  .hero h1 span{color:var(--blue)}
+  .hero p{color:var(--muted);font-size:1.1rem;max-width:560px;margin-bottom:36px}
+  .hero-btns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+  .btn-primary{
+    background:var(--blue);color:#fff;padding:12px 28px;border-radius:10px;
+    font-size:1rem;font-weight:600;text-decoration:none;transition:background .2s,transform .15s;
+  }
+  .btn-primary:hover{background:var(--blue2);transform:translateY(-1px)}
+  .btn-secondary{
+    background:transparent;color:var(--text);padding:12px 28px;border-radius:10px;
+    font-size:1rem;font-weight:600;text-decoration:none;border:1px solid var(--border);
+    transition:border-color .2s,transform .15s;
+  }
+  .btn-secondary:hover{border-color:var(--blue);transform:translateY(-1px)}
+
+  /* STATS BAR */
+  .stats{
+    display:flex;justify-content:center;gap:48px;flex-wrap:wrap;
+    padding:32px 5%;border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+    background:var(--bg2);
+  }
+  .stat{text-align:center}
+  .stat-n{font-size:1.8rem;font-weight:800;color:var(--white)}
+  .stat-l{font-size:.8rem;color:var(--muted);margin-top:2px}
+
+  /* SECTIONS COMMON */
+  section{padding:80px 5%}
+  .section-tag{
+    display:inline-block;color:var(--blue);font-size:.8rem;font-weight:700;
+    letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;
+  }
+  .section-title{font-size:clamp(1.6rem,3vw,2.2rem);font-weight:800;margin-bottom:12px}
+  .section-sub{color:var(--muted);font-size:1rem;max-width:520px;margin-bottom:48px}
+
+  /* FEATURES */
+  #features{background:var(--bg)}
+  .features-grid{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;
+  }
+  .feat-card{
+    background:var(--bg2);border:1px solid var(--border);border-radius:14px;
+    padding:28px;transition:border-color .2s,transform .2s;
+  }
+  .feat-card:hover{border-color:var(--blue);transform:translateY(-3px)}
+  .feat-icon{
+    width:44px;height:44px;background:var(--blue-glow);border:1px solid rgba(59,130,246,0.25);
+    border-radius:10px;display:flex;align-items:center;justify-content:center;
+    font-size:1.3rem;margin-bottom:16px;
+  }
+  .feat-card h3{font-size:1rem;font-weight:700;margin-bottom:6px;color:var(--white)}
+  .feat-card p{color:var(--muted);font-size:.875rem;line-height:1.6}
+
+  /* HOW IT WORKS */
+  #como-funciona{background:var(--bg2)}
+  .steps{display:flex;flex-direction:column;gap:0;max-width:700px}
+  .step{display:flex;gap:24px;position:relative;padding-bottom:40px}
+  .step:last-child{padding-bottom:0}
+  .step-left{display:flex;flex-direction:column;align-items:center}
+  .step-num{
+    width:44px;height:44px;border-radius:50%;background:var(--blue);
+    color:#fff;font-weight:800;font-size:1rem;display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .step-line{flex:1;width:2px;background:var(--border);margin-top:8px}
+  .step:last-child .step-line{display:none}
+  .step-body{padding-top:10px}
+  .step-body h3{font-size:1.05rem;font-weight:700;color:var(--white);margin-bottom:6px}
+  .step-body p{color:var(--muted);font-size:.9rem}
+
+  /* CONTACT */
+  #contacto{background:var(--bg)}
+  .contact-wrap{
+    max-width:600px;background:var(--bg2);border:1px solid var(--border);
+    border-radius:16px;padding:40px;
+  }
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+  .form-group label{font-size:.85rem;color:var(--muted);font-weight:500}
+  .form-group input,.form-group textarea,.form-group select{
+    background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+    color:var(--text);padding:10px 14px;font-size:.9rem;font-family:inherit;
+    transition:border-color .2s;outline:none;
+  }
+  .form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--blue)}
+  .form-group textarea{resize:vertical;min-height:110px}
+  .form-group select option{background:var(--bg3)}
+  .submit-btn{
+    width:100%;background:var(--blue);color:#fff;border:none;padding:13px;
+    border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;transition:background .2s;
+  }
+  .submit-btn:hover{background:var(--blue2)}
+  .form-note{color:var(--muted);font-size:.8rem;text-align:center;margin-top:12px}
+
+  /* FOOTER */
+  footer{
+    background:var(--bg2);border-top:1px solid var(--border);
+    padding:28px 5%;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+  }
+  footer p{color:var(--muted);font-size:.85rem}
+  .footer-links{display:flex;gap:20px}
+  .footer-links a{color:var(--muted);font-size:.85rem;text-decoration:none;transition:color .2s}
+  .footer-links a:hover{color:var(--white)}
+
+  /* TOAST */
+  .toast{
+    position:fixed;bottom:28px;right:28px;background:#1a2f1a;border:1px solid #2ea043;
+    color:#7ee787;padding:14px 20px;border-radius:10px;font-size:.9rem;font-weight:500;
+    opacity:0;transform:translateY(10px);transition:all .3s;z-index:999;pointer-events:none;
+  }
+  .toast.show{opacity:1;transform:translateY(0)}
+
+  @media(max-width:640px){
+    .form-row{grid-template-columns:1fr}
+    .stats{gap:28px}
+    .nav-links{display:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="logo" href="#">
+    <div class="logo-icon">F</div>
+    <span class="logo-name">Foraria</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#features">Funcionalidades</a></li>
+    <li><a href="#como-funciona">Cómo funciona</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+  <a class="nav-cta" href="#contacto">Quiero una demo</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">🏢 Software para consorcios</div>
+  <h1>Administrá tu consorcio <span>sin el caos</span></h1>
+  <p>Una plataforma completa para administradores y propietarios: expensas, reclamos, comunicación y mucho más, todo en un solo lugar.</p>
+  <div class="hero-btns">
+    <a class="btn-primary" href="#contacto">Quiero una demo gratuita</a>
+    <a class="btn-secondary" href="#features">Ver funcionalidades</a>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat"><div class="stat-n">+25</div><div class="stat-l">Módulos integrados</div></div>
+  <div class="stat"><div class="stat-n">100%</div><div class="stat-l">Cloud & seguro</div></div>
+  <div class="stat"><div class="stat-n">Multi</div><div class="stat-l">Tenant por consorcio</div></div>
+  <div class="stat"><div class="stat-n">24/7</div><div class="stat-l">Notificaciones en tiempo real</div></div>
+</div>
+
+<!-- FEATURES -->
+<section id="features">
+  <div>
+    <span class="section-tag">Funcionalidades</span>
+    <h2 class="section-title">Todo lo que necesitás, ya construido</h2>
+    <p class="section-sub">Desde la gestión de expensas hasta videollamadas con los propietarios, cada herramienta está pensada para el administrador moderno.</p>
+  </div>
+  <div class="features-grid">
+    <div class="feat-card">
+      <div class="feat-icon">💰</div>
+      <h3>Gestión de Expensas</h3>
+      <p>Liquidación automática, seguimiento de pagos y cobro online integrado con Mercado Pago.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">📋</div>
+      <h3>Reclamos y Tickets</h3>
+      <p>Sistema de reclamos con seguimiento en tiempo real. Propietarios e inquilinos siempre informados.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🗳️</div>
+      <h3>Votaciones en Vivo</h3>
+      <p>Asambleas digitales con votaciones en tiempo real vía SignalR. Resultados instantáneos y auditables.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">📄</div>
+      <h3>OCR de Facturas</h3>
+      <p>Carga inteligente de comprobantes con reconocimiento automático de datos usando IA de Azure.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🔔</div>
+      <h3>Notificaciones Push</h3>
+      <p>Alertas instantáneas a propietarios e inquilinos en sus dispositivos móviles, en todo momento.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🎥</div>
+      <h3>Videollamadas</h3>
+      <p>Reuniones integradas con grabación automática y resumen generado por IA al finalizar la llamada.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">⛓️</div>
+      <h3>Notarización Blockchain</h3>
+      <p>Documentos importantes registrados en blockchain para garantizar integridad y trazabilidad.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">👥</div>
+      <h3>Roles y Permisos</h3>
+      <p>Control granular por consorcio: Consejo, Administrador, Propietario e Inquilino con permisos configurables.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🏢</div>
+      <h3>Multi-Consorcio</h3>
+      <p>Gestioná múltiples edificios desde un solo panel, con datos completamente aislados entre consorcios.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="como-funciona">
+  <div>
+    <span class="section-tag">Cómo funciona</span>
+    <h2 class="section-title">De cero a operativo en minutos</h2>
+    <p class="section-sub">Sin instalaciones, sin configuraciones complejas. Empezás a usarlo el mismo día.</p>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-left"><div class="step-num">1</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <h3>Nos contactás y agendamos una demo</h3>
+        <p>Te mostramos la plataforma en vivo, adaptada a tu caso. Sin compromiso, sin tarjeta de crédito.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num">2</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <h3>Creamos tu espacio y cargamos tus datos</h3>
+        <p>Te acompañamos en la configuración inicial: edificios, propietarios, unidades funcionales y más.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num">3</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <h3>Invitás a tus propietarios e inquilinos</h3>
+        <p>Cada uno recibe acceso a su portal personal con la información de su unidad y el consorcio.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num">4</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <h3>Operás todo desde un solo lugar</h3>
+        <p>Expensas, reclamos, votaciones, documentos y comunicación centralizada. Tu gestión, ordenada.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contacto">
+  <div>
+    <span class="section-tag">Contacto</span>
+    <h2 class="section-title">¿Querés una demo gratuita?</h2>
+    <p class="section-sub">Completá el formulario y te contactamos para coordinar una reunión sin compromiso.</p>
+  </div>
+  <div class="contact-wrap">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Nombre</label>
+        <input type="text" id="fname" placeholder="Tu nombre"/>
+      </div>
+      <div class="form-group">
+        <label>Apellido</label>
+        <input type="text" id="lname" placeholder="Tu apellido"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="email" placeholder="correo@ejemplo.com"/>
+    </div>
+    <div class="form-group">
+      <label>¿Cuántos edificios administrás?</label>
+      <select id="buildings">
+        <option value="">Seleccioná una opción</option>
+        <option>1 edificio</option>
+        <option>2 a 5 edificios</option>
+        <option>6 a 15 edificios</option>
+        <option>Más de 15 edificios</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Contanos tu situación actual (opcional)</label>
+      <textarea id="msg" placeholder="¿Qué herramientas usás hoy? ¿Qué te gustaría resolver?"></textarea>
+    </div>
+    <button class="submit-btn" onclick="handleSubmit()">Quiero mi demo gratuita →</button>
+    <p class="form-note">Te respondemos dentro de las 24hs hábiles.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2025 Foraria. Todos los derechos reservados.</p>
+  <div class="footer-links">
+    <a href="#features">Funcionalidades</a>
+    <a href="#como-funciona">Cómo funciona</a>
+    <a href="#contacto">Contacto</a>
+  </div>
+</footer>
+
+<div class="toast" id="toast">✅ ¡Mensaje enviado! Te contactamos pronto.</div>
+
+<script>
+  function handleSubmit(){
+    const email = document.getElementById('email').value.trim();
+    const fname = document.getElementById('fname').value.trim();
+    if(!fname || !email){
+      alert('Por favor completá al menos tu nombre y email.');
+      return;
+    }
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),3500);
+    document.getElementById('fname').value='';
+    document.getElementById('lname').value='';
+    document.getElementById('email').value='';
+    document.getElementById('buildings').value='';
+    document.getElementById('msg').value='';
+  }
+</script>
+</body>
+</html>
