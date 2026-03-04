@@ -363,21 +363,47 @@
 <div class="toast" id="toast">✅ ¡Mensaje enviado! Te contactamos pronto.</div>
 
 <script>
-  function handleSubmit(){
-    const email = document.getElementById('email').value.trim();
+  async function handleSubmit(){
     const fname = document.getElementById('fname').value.trim();
+    const lname = document.getElementById('lname').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const buildings = document.getElementById('buildings').value;
+    const msg = document.getElementById('msg').value.trim();
+
     if(!fname || !email){
       alert('Por favor completá al menos tu nombre y email.');
       return;
     }
-    const t = document.getElementById('toast');
-    t.classList.add('show');
-    setTimeout(()=>t.classList.remove('show'),3500);
-    document.getElementById('fname').value='';
-    document.getElementById('lname').value='';
-    document.getElementById('email').value='';
-    document.getElementById('buildings').value='';
-    document.getElementById('msg').value='';
+
+    const btn = document.querySelector('.submit-btn');
+    btn.textContent = 'Enviando...';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch('https://formspree.io/f/mwvngaer', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+        body: JSON.stringify({ nombre: fname + ' ' + lname, email, edificios: buildings, mensaje: msg })
+      });
+
+      if(res.ok){
+        const t = document.getElementById('toast');
+        t.classList.add('show');
+        setTimeout(()=>t.classList.remove('show'),3500);
+        document.getElementById('fname').value='';
+        document.getElementById('lname').value='';
+        document.getElementById('email').value='';
+        document.getElementById('buildings').value='';
+        document.getElementById('msg').value='';
+      } else {
+        alert('Hubo un error al enviar. Intentá de nuevo.');
+      }
+    } catch(e) {
+      alert('Error de conexión. Revisá tu internet e intentá de nuevo.');
+    }
+
+    btn.textContent = 'Quiero mi demo gratuita →';
+    btn.disabled = false;
   }
 </script>
 </body>
